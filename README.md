@@ -22,12 +22,17 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
 - **Recensement de la population (CSP, sexe et âge)**  
   https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_POPULATION_COMP  
   Variables : Catégorie socioprofessionnelle, sexe, âge
+  Variables à retenir : GEO, SEX, PCS, AGE, OBS_VALUE sur la période 2021
 
-- **Taux de pauvreté (niveau commune)**  
-  https://www.insee.fr/fr/statistiques/7756855?sommaire=7756859
+
+- **Taux de pauvreté (niveau commune)**
+https://www.insee.fr/fr/statistiques/7756855?sommaire=7756859
+Variables à retenir : TP4021, TP5021, TP6021 les taux de pauvreté à différents seuils (40%, 50%, 60%)
+
 
 - **Logements (statut d’occupation)**  
   https://www.insee.fr/fr/statistiques/8202349?sommaire=8202874
+  Variables à retenir : P21_RP_PROP (nombre de propriétaires en RP), P21_RP_LOC (nombre de locataires en RP)
 
 - **APIs INSEE**  
   - Données locales : https://api.insee.fr/donnees-locales/
@@ -41,3 +46,4 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
 ---
 
 *Projet open source, contributions bienvenues !*
+
