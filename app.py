@@ -89,6 +89,11 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+st.set_page_config(
+    page_title="Simulateur de parité sociale Municipales 2026",
+    page_icon="🏛️",
+)
+
 c = st.container()
 c.title("🏛️ Simulateur de parité sociale Municipales 2026")
 c.markdown("### De quels élu.e.s votre commune a-t-elle besoin ?")
