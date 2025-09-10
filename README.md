@@ -2,9 +2,9 @@
 
 ## Objectifs du projet
 
-Ce projet vise à encourager les candidats aux **Municipales 2026** à imaginer à quoi ressemblerait leur conseil municipal s’il était à l’image de la population de leur commune. L’objectif est de sensibiliser aux inégalités de représentation et de fournir un outil simple pour visualiser la composition idéale d’un conseil municipal selon différents critères sociaux (catégorie socioprofessionnelle, taux de pauvreté, statut de logement…).
+Ce projet vise à encourager les candidats aux **Municipales 2026** à imaginer à quoi ressemblerait leur conseil municipal s’il était à l’image de la population de leur commune. L’objectif est de sensibiliser aux inégalités de représentation et de fournir un outil simple pour visualiser la composition idéale d’un conseil municipal selon différents critères sociaux, notamment les [catégories socioprofessionnelles](https://fr.wikipedia.org/wiki/Professions_et_cat%C3%A9gories_socioprofessionnelles_en_France).
 
-L’outil permettra, à partir du nom d’une commune, de générer automatiquement des données issues de l’INSEE, afin de faciliter la tâche des candidats et des citoyens soucieux de lutter contre les inégalités politiques.
+L’outil permettra, à partir du nom d’une commune, de générer automatiquement des données issues de l’INSEE, afin de faciliter la tâche des candidats et des citoyens soucieux de lutter contre les inégalités de réprésentation de la population en politique.
 
 ## Contexte
 
