@@ -38,41 +38,41 @@ def calculate_theoretical_representation(csp_data, code_commune, pop_muni):
     
     # Filtrer les données pour la commune choisie
     commune_data = csp_data[csp_data['GEO'] == code_commune]
-
-    if commune_data:
-        # Chercher les informations de base
-            # Population municipale 
-        pop_municipale = pop_muni[pop_muni['GEO'] == code_commune]['OBS_VALUE'].values[0]
-
-            # Population de 15 ans ou plus
-        total_population_15_plus = commune_data[commune_data['PCS'] == '_T']['OBS_VALUE'].values[0]
-
-            # Nombre de conseillers municipaux
-        nombre_conseillers = pop_muni[pop_muni['GEO'] == code_commune]['nombre_conseillers'].values[0]
-
-        # Créer un DataFrame avec les informations de bases
-        infos_commune = pd.DataFrame({
-            'Population municipale': [pop_municipale],
-            'Nombre de conseillers municipaux': [nombre_conseillers]
-        })
-
-        # Calculer les pourcentages par CSP
-        poids = {}
-        
-        for key, label in CSP.items():
-            subset = commune_data[commune_data["PCS"] == key]
-
-            if not subset.empty:
-                poid = (subset["OBS_VALUE"].values[0] / total_population_15_plus) * 100
-                poids[label]= poid
-            else:
-                poids[label] = None
     
-        tab_final = pd.DataFrame(list(poids.items()), columns=["Catgéorie socio-professionelle", "Poids dans la population communale (%) *"])
-        tab_final["Nombre de sièges théorique au conseil municipal **"] = round(nombre_conseillers * (tab_final["Poids dans la population communale (%) *"] / 100))
-        tab_final["Poids dans la population communale (%) *"] = tab_final["Poids dans la population communale (%) *"].round(2)
-        
-        return tab_final, infos_commune
+    # Chercher les informations de base
+        # Population municipale 
+    pop_municipale = pop_muni[pop_muni['GEO'] == code_commune]['OBS_VALUE'].values[0]
+
+        # Population de 15 ans ou plus
+    total_population_15_plus = commune_data[commune_data['PCS'] == '_T']['OBS_VALUE'].values[0]
+
+        # Nombre de conseillers municipaux
+    nombre_conseillers = pop_muni[pop_muni['GEO'] == code_commune]['nombre_conseillers'].values[0]
+
+    # Créer un DataFrame avec les informations de bases
+    infos_commune = pd.DataFrame({
+        'Population municipale': [pop_municipale],
+        'Population de 15 ans ou plus': [total_population_15_plus],
+        'Nombre de conseillers municipaux': [nombre_conseillers]
+    })
+
+    # Calculer les pourcentages par CSP
+    poids = {}
+    
+    for key, label in CSP.items():
+        subset = commune_data[commune_data["PCS"] == key]
+
+        if not subset.empty:
+            poid = (subset["OBS_VALUE"].values[0] / total_population_15_plus) * 100
+            poids[label]= poid
+        else:
+            poids[label] = None
+   
+    tab_final = pd.DataFrame(list(poids.items()), columns=["Catgéorie socio-professionelle", "Poids dans la population communale (%)"])
+    tab_final["Nombre de sièges théorique au conseil municipal"] = round(nombre_conseillers * (tab_final["Poids dans la population communale (%)"] / 100))
+    tab_final["Poids dans la population communale (%)"] = tab_final["Poids dans la population communale (%)"].round(2)
+    
+    return tab_final, infos_commune
 
 ############################### interface ##############################################
 st.markdown(
@@ -96,7 +96,6 @@ c.markdown("---")
 # Liste d'options de sélection des communes
 communes_df = load_commune_data()
 # Modifier la colonne libellé an ajoutant les deux premier caractère de la colonne COM comme suit 'Libellé (XX)'
-
 communes_df["LIBELLE"] = communes_df["LIBELLE"] + " (" + communes_df["COM"].str[:2] + ")" 
 communes_dict = dict(zip(communes_df["LIBELLE"], communes_df["COM"]))
 
@@ -118,9 +117,6 @@ if libelle_choisi:
     pop_data = load_population_municipale_data()
 
     tab_final, infos_commune = calculate_theoretical_representation(csp_data, com_valeur, pop_data)
-    if tab_final and infos_commune:
-        c.dataframe(infos_commune, use_container_width=True, hide_index=True)
-        c.dataframe(tab_final, use_container_width=True, hide_index=True)
-    else:
-        st.write('### Acune donnée disponible pour cette commune.')
+    c.dataframe(infos_commune, use_container_width=True, hide_index=True)
+    c.dataframe(tab_final, use_container_width=True, hide_index=True)
 
