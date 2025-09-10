@@ -35,43 +35,44 @@ def load_population_municipale_data():
 def calculate_theoretical_representation(csp_data, code_commune, pop_muni):
     """Calcule la représentation théorique par CSP"""
     
-    
     # Filtrer les données pour la commune choisie
     commune_data = csp_data[csp_data['GEO'] == code_commune]
+
+    infos_commune = None
+    tab_final = None
+    if not commune_data.empty:
+        # Chercher les informations de base
+            # Population municipale 
+        pop_municipale = pop_muni[pop_muni['GEO'] == code_commune]['OBS_VALUE'].values[0]
+
+            # Population de 15 ans ou plus
+        total_population_15_plus = commune_data[commune_data['PCS'] == '_T']['OBS_VALUE'].values[0]
+
+            # Nombre de conseillers municipaux
+        nombre_conseillers = pop_muni[pop_muni['GEO'] == code_commune]['nombre_conseillers'].values[0]
+
+        # Créer un DataFrame avec les informations de bases
+        infos_commune = pd.DataFrame({
+            'Population municipale': [pop_municipale],
+            'Nombre de conseillers municipaux': [nombre_conseillers]
+        })
+
+        # Calculer les pourcentages par CSP
+        poids = {}
+        
+        for key, label in CSP.items():
+            subset = commune_data[commune_data["PCS"] == key]
+
+            if not subset.empty:
+                poid = (subset["OBS_VALUE"].values[0] / total_population_15_plus) * 100
+                poids[label]= poid
+            else:
+                poids[label] = None
     
-    # Chercher les informations de base
-        # Population municipale 
-    pop_municipale = pop_muni[pop_muni['GEO'] == code_commune]['OBS_VALUE'].values[0]
-
-        # Population de 15 ans ou plus
-    total_population_15_plus = commune_data[commune_data['PCS'] == '_T']['OBS_VALUE'].values[0]
-
-        # Nombre de conseillers municipaux
-    nombre_conseillers = pop_muni[pop_muni['GEO'] == code_commune]['nombre_conseillers'].values[0]
-
-    # Créer un DataFrame avec les informations de bases
-    infos_commune = pd.DataFrame({
-        'Population municipale': [pop_municipale],
-        'Population de 15 ans ou plus': [total_population_15_plus],
-        'Nombre de conseillers municipaux': [nombre_conseillers]
-    })
-
-    # Calculer les pourcentages par CSP
-    poids = {}
-    
-    for key, label in CSP.items():
-        subset = commune_data[commune_data["PCS"] == key]
-
-        if not subset.empty:
-            poid = (subset["OBS_VALUE"].values[0] / total_population_15_plus) * 100
-            poids[label]= poid
-        else:
-            poids[label] = None
-   
-    tab_final = pd.DataFrame(list(poids.items()), columns=["Catgéorie socio-professionelle", "Poids dans la population communale (%)"])
-    tab_final["Nombre de sièges théorique au conseil municipal"] = round(nombre_conseillers * (tab_final["Poids dans la population communale (%)"] / 100))
-    tab_final["Poids dans la population communale (%)"] = tab_final["Poids dans la population communale (%)"].round(2)
-    
+        tab_final = pd.DataFrame(list(poids.items()), columns=["Catgéorie socio-professionelle", "Poids dans la population communale (%) *"])
+        tab_final["Nombre de sièges théorique au conseil municipal **"] = round(nombre_conseillers * (tab_final["Poids dans la population communale (%) *"] / 100))
+        tab_final["Poids dans la population communale (%) *"] = tab_final["Poids dans la population communale (%) *"].round(2)
+        
     return tab_final, infos_commune
 
 ############################### interface ##############################################
@@ -80,7 +81,7 @@ st.markdown(
     <style>
     /* Cible le conteneur principal */
     .block-container {
-        max-width: 55rem; 
+        max-width: 56rem; 
         margin: auto;       /* centre horizontalement */
         padding-top: 2rem;
     }
@@ -117,6 +118,25 @@ if libelle_choisi:
     pop_data = load_population_municipale_data()
 
     tab_final, infos_commune = calculate_theoretical_representation(csp_data, com_valeur, pop_data)
-    c.dataframe(infos_commune, use_container_width=True, hide_index=True)
-    c.dataframe(tab_final, use_container_width=True, hide_index=True)
+    if tab_final is not None and not tab_final.empty:
+        c.dataframe(infos_commune, hide_index=True)
+        c.dataframe(tab_final, hide_index=True)
+        st.html(
+            """
+            <small>
+                (*) Le ratio des CSP dans la population ne concerne que 
+                les personnes de 15 ans ou plus (toutes les données sont issues de ce fichier 
+                <a href="https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_POPULATION_COMP" target="_blank">Recensement de la population
+                - Exploitation complémentaire</a>). </br>
+                (**) Le nombre de conseillers municipaux par commune a été calculé à partir de ce fichier (population municipale)
+                <a href="https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_POPULATIONS_REFERENCE" target="_blank">
+                    Recensement de la population - Population de référence</a>
+                    et la clé de réparition issue 
+                du <a href="https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006070633/LEGISCTA000006164544/" target="_blank">
+                        code des collectivités territoriales.
+                    </a>
+            </small>
+            """)
+    else:
+        st.markdown("⚠️ Aucune donnée disponible pour cette commune.")
 
