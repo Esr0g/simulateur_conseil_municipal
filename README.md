@@ -1,48 +1,61 @@
-# Simulateur de Conseil Municipal à l’image de la population
+# 🏛️ Simulateur de parité sociale - Municipales 2026
 
 ## Objectifs du projet
 
-Ce projet vise à encourager les candidats aux **Municipales 2026** à imaginer à quoi ressemblerait leur conseil municipal s’il était à l’image de la population de leur commune. L’objectif est de sensibiliser aux inégalités de représentation et de fournir un outil simple pour visualiser la composition idéale d’un conseil municipal selon différents critères sociaux (catégorie socioprofessionnelle, taux de pauvreté, statut de logement…).
+Ce projet vise à encourager les candidats aux **Municipales 2026** à imaginer à quoi ressemblerait leur conseil municipal s’il était à l’image de la population de leur commune. L’objectif est de sensibiliser aux inégalités de représentation et de fournir un outil simple pour visualiser la composition idéale d’un conseil municipal selon différents critères sociaux, notamment les [catégories socioprofessionnelles](https://fr.wikipedia.org/wiki/Professions_et_cat%C3%A9gories_socioprofessionnelles_en_France).
 
-L’outil permettra, à partir du nom d’une commune, de générer automatiquement des données issues de l’INSEE, afin de faciliter la tâche des candidats et des citoyens soucieux de lutter contre les inégalités politiques.
+L’outil permettra, à partir du nom d’une commune, de générer automatiquement des données issues de l’INSEE, afin de faciliter la tâche des candidats et des citoyens soucieux de lutter contre les inégalités de réprésentation de la population en politique.
 
 ## Contexte
 
 Ce projet est porté dans le cadre de l’association **Data For Good France**, en lien avec la démarche de la #Lettreaux500000 et en collaboration avec différents collectifs engagés pour la démocratie locale (Démocratie Ouverte, Tous Elus, A Voté, Démocratiser la Politique, Fréquence Commune…).
 
+## Points d'attention pour utiliser le simulateur
+- Le **ratio des CSP dans la population** ne concerne que les personnes de **15 ans ou plus** (toutes les données sont issues de ce fichier [Recensement de la population - Exploitation complémentaire](https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_POPULATION_COMP)) ;
+- Le **nombre de conseillers municipaux** par commune a été calculé à partir de ce fichier (population municipale) [Recensement de la population - Population de référence](https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_POPULATIONS_REFERENCE) et la clé de réparition issue [du code des collectivités territoriales](https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006070633/LEGISCTA000006164544/) ;
+- Nous avons arrondis à l'entier le plus proche le **nombre de sièges théorique au conseil municipal**, ainsi le total par commune peut être inférieur ou supérieur au nombre réel de conseillers municipaux.
+
 ## Travail réalisé jusqu’à maintenant
 
-- Exploration et récupération des données INSEE pertinentes (catégories socioprofessionnelles, taux de pauvreté, statut d’occupation du logement…)
-- Scripts Python pour interroger les APIs de l’INSEE et manipuler les jeux de données (voir notebooks `get_data2.ipynb`)
-- Premiers prototypes de visualisations (diagrammes, camemberts) pour représenter la structure sociale d’une commune
+- Exploration et récupération des données INSEE pertinentes
+- Scripts Python pour pré-traiter les données, notamment réduire la taille des données sources (voir notebooks `traitement_data.ipynb`). Par exemple, le fichier de rescencement de la population par CSP a été réduit de 80 à 3Mo.
+- Affichage des données pour chaque commune et calcul des ratios théoriques de composition des conseils municipaux
 - Documentation des sources et des variables utilisées
+- Un premier travail avait été effectué pour chercher les données depuis l'API de l'INSEE, les scripts se trouvent dans le repertoire `/old/`
 
 ## Sources de données utilisées
 
-- **Recensement de la population (CSP, sexe et âge)**  
-  https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_POPULATION_COMP  
-  Variables : Catégorie socioprofessionnelle, sexe, âge
-  Variables à retenir : GEO, SEX, PCS, AGE, OBS_VALUE sur la période 2021
+- **Recensement de la population - Exploitation complémentaire**
+  - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_POPULATION_COMP
+  - Identifiant : DS_RP_POPULATION_COMP
+  - Année 2022
+  - Variables à retenir : GEO, PCS, OBS_VALUE sur la période 2022, pour les personnes de 15 ans ou plus, indifférent de l'âge
+  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour réduire sa taille.
+  - Fichier traité = `data/population_communes_2022_csp.csv`
 
+- **Recensement de la population - Population de référence**
+  - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_POPULATIONS_REFERENCE 
+  - Identifiant : DS_POPULATIONS_REFERENCE
+  - Année 2022
+  - Variable à retenir : GEO, OBS_VALUE
+  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` ajouter le nombre de conseillers municipaux à partir du fichier `conseillers.csv`
+  - Fichier traité = `data/population_municipale_2022_et_conseillers.csv`
+    
+- **Nombre de conseillers munincipaux selon la population**
+  -   Fichier créé par les développeurs
+  -   Lien source : https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006070633/LEGISCTA000006164544/
+  -   Fichier est utilisé pour calculer le nombre de connseillers par commune dans le notebook `traitement_data.ipynb`
+  -   Fichier = `data/conseillers.csv`
 
-- **Taux de pauvreté (niveau commune)**
-https://www.insee.fr/fr/statistiques/7756855?sommaire=7756859
-Variables à retenir : TP4021, TP5021, TP6021 les taux de pauvreté à différents seuils (40%, 50%, 60%)
+- **Code officiel géographique au 1er janvier 2022 - Communes**
+  - Lien : https://www.insee.fr/fr/information/6051727
+  - Fichier traité par les développeur pour réduire sa taille
+  - Fichier traité = `data/commune_2022-reduced.csv`
+ 
+## Prochaines étapes :
 
-
-- **Logements (statut d’occupation)**  
-  https://www.insee.fr/fr/statistiques/8202349?sommaire=8202874
-  Variables à retenir : P21_RP_PROP (nombre de propriétaires en RP), P21_RP_LOC (nombre de locataires en RP)
-
-- **APIs INSEE**  
-  - Données locales : https://api.insee.fr/donnees-locales/
-  - MELODI : https://api.insee.fr/melodi
-
-## Prochaines étapes : mise en place de l'infrastructure
-
-- **Source de données** : utilisation d'un CSV "light" ou d'une base de données SQL pour centraliser et structurer les données issues de l'INSEE.
-- **Couche BI** : mise en place de Metabase pour l'exploration et la visualisation des données, solution couramment utilisée chez Data For Good.
-
+- [ ] Ajouter des graphiques
+- [ ] Ajouter une fonctionnalité de saisie collaborative des CSP des candidat.e.s pour comparer les listes candidates et la répartitions théoriques de conseillers municipaux
 ---
 
 *Projet open source, contributions bienvenues !*
