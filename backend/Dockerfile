@@ -1,4 +1,4 @@
-FROM python:3.15.0a1-slim-trixie
+FROM python:3.14-alpine3.22
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

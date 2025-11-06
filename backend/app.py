@@ -1,19 +1,8 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from app import create_app
 
-app = Flask(__name__)
+app = create_app()
 
-CORS(app, resources={
-    r"/api/*": {"origins": ["http://localhost:5173", "http://host.docker.internal:5173"]}
-})
-
-@app.before_request
-def log_origin():
-    print("Origin header:", request.headers.get("Origin"))
-
-@app.route('/api/hello')
-def hello():
-    return jsonify(message="Hello from Flask!")
+# from backend.app.database import db_init
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
