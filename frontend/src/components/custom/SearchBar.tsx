@@ -15,6 +15,7 @@ export function SearchBar({ onChange }: { onChange: (val: BaseCommune) => void }
             return;
         };
 
+        // debounce pour éviter de spamer le back
         const handler = setTimeout(() => {
             const fetchData = async () => {
                 const data = await fetchCommunes(inputValue);

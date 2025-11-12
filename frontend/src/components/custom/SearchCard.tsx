@@ -10,6 +10,7 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
     let navigate = useNavigate();
     const { code } = useParams<{ code?: string }>();
 
+    // Récupère les communes soit quand un code est présent dans l'url soit lorque le bouton "simuler" est pressé
     const fetchData = async () => {
         if (!commune && !code) return;
 
@@ -25,6 +26,7 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
         navigate(`/${data[0].code}`, { replace: true })
     }
 
+    // Permet de retirer de l'url le code si invalide
     useEffect(() => {
         if (!code) return;
 

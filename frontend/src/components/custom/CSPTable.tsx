@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export default function CSPTable({ data }: { data: CommuneCSP }) {
     const [totPopCSP, setTotPopCSP] = useState(0);
 
+    // Somme des CSP pour calculer le ratio des conseillers et le poids
     useEffect(() => {
         if (data.length === 0) return;
 
