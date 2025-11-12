@@ -17,7 +17,7 @@ class CommuneManager:
             for r in rows:
                 name = r['nom'].lower()
                 score = fuzz.WRatio(query, name)
-                if score >= 70:
+                if score >= 75:
                     results.append((score, dict(r)))
 
         results.sort(reverse=True, key=lambda x: x[0])

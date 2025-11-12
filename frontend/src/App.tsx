@@ -1,16 +1,20 @@
-import { useEffect, useState } from 'react'
-import { Button } from '@/components/ui/button';
+import { useState } from "react"
+import { type CommuneCSP } from "@/models/commune";
+import Header from "./components/custom/Header";
+import SearchCard from "./components/custom/SearchCard";
+import DataCard from "./components/custom/DataCard";
+
 
 function App() {
-  const [message, setMessage] = useState('Loading...');
+    const [communeData, setCommuneData] = useState<CommuneCSP>([]);
 
-  useEffect(() => {
-    fetch('http://localhost:5000/api/hello')
-      .then(res => res.json())
-      .then(data => setMessage(data.message));
-  }, []);
-
-  return <Button>Button</Button>
+    return (
+        <div className="flex flex-col gap-4 items-center  bg-(--color-background) w-full sm:w-3/4 xl:w-9/12 m-auto" >
+            <Header />
+            <SearchCard data={communeData} onDataSet={setCommuneData} />
+            <DataCard data={communeData} />
+        </div >
+    )
 }
 
 export default App
