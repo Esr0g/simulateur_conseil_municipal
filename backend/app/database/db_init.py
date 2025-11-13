@@ -4,6 +4,7 @@ import sqlite3
 conn = sqlite3.connect('app/database/data.db')
 cursor = conn.cursor()
 
+# TODO : bien reprendre les communes de 2026
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS communes (
                code TEXT,

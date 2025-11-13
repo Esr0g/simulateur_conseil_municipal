@@ -1,7 +1,8 @@
 from app.api import bp
 from .commune_manager import CommuneManager
-from flask import request, jsonify, abort
+from flask import request, jsonify, abort, current_app
 from app.database.database import Database
+import math
 
 communeManager = CommuneManager()
 
@@ -31,7 +32,39 @@ def searchCommunesByCode(code):
                         """, (code,)).fetchall()
     if not rows:
         abort(404, description="Code commune invalide")
+    
+    res = []
+    tot_pop_csp = 0
 
-    return jsonify([dict(r) for r in rows])
+    # Somme pour avoir la population CSP totale
+    for r in rows:
+        res.append(dict(r))
+        tot_pop_csp += dict(r)["population_csp"]
+    
+    # On met dans une liste la partie entière et la fraction puis on trie sur la fraction
+    nb_conseillers = rows[0]["nb_conseillers"] 
+    temp_list = []
+    tot_conseillers = 0
+    for r in rows:
+        fraction, entier = math.modf(r["population_csp"] * nb_conseillers / tot_pop_csp)
+        temp_list.append([fraction, entier, r["csp_code"]])
+        tot_conseillers += entier
+    temp_list.sort();
+
+    # On ajoute 1 à la partie entière de l'élement qui à la fraciton la plus élevée
+    # jusqu'à ce qu'on atteigne le nombre de conseillers
+    i = 0;
+    while tot_conseillers != nb_conseillers:
+        temp_list[i][1] += 1
+        tot_conseillers += 1
+        i = (i + 1) % 7
+
+    # On ajoute une colonne qui contient le nombre exact de conseiller en fonction de la CSP
+    entiers_par_csp = {t[2]: t[1] for t in temp_list} 
+
+    for r in res:
+        r["nb_conseillers_csp"] = entiers_par_csp[r["csp_code"]]
+
+    return jsonify(res)
         
         

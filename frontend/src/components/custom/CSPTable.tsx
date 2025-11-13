@@ -18,7 +18,7 @@ export default function CSPTable({ data }: { data: CommuneCSP }) {
     }, [data])
 
     return (
-        <Table className="text-[0.75rem] sm:text-sm w-full table-fixed sm:table-auto">
+        <Table className="text-[0.78rem] sm:text-sm w-full table-fixed sm:table-auto">
             <TableHeader>
                 <TableRow className="bg-(--color-background) hover:bg-(--color-background)">
                     <TableHead className="wrap-break-word whitespace-normal w-1/3 sm:w-auto pl-4">
@@ -41,9 +41,9 @@ export default function CSPTable({ data }: { data: CommuneCSP }) {
             <TableBody>
                 {data && data.map((csp) => (
                     <TableRow key={csp.csp_code}>
-                        <TableCell className="text-[0.65rem] wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
-                        <TableCell className="text-[0.65rem] text-center">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
-                        <TableCell className="text-[0.65rem] text-center">{Math.round(csp.population_csp * csp.nb_conseillers / totPopCSP)}</TableCell>
+                        <TableCell className="text-[0.75rem] sm:text-sm wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
+                        <TableCell className="text-[0.75rem] sm:text-sm text-center">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
+                        <TableCell className="text-[0.75rem] sm:text-sm text-center">{csp.nb_conseillers_csp}</TableCell>
                     </TableRow>))}
             </TableBody>
         </Table>

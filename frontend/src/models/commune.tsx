@@ -14,6 +14,7 @@ export const fullCommuneSchema = baseCommuneSchema.extend({
     nb_conseillers: z.number(),
     pop_municipale: z.number(),
     population_csp: z.number(),
+    nb_conseillers_csp: z.number(),
 });
 
 export const fullCommuneSchemaResponse = z.array(fullCommuneSchema)
