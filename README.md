@@ -38,19 +38,28 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
   - Identifiant : DS_POPULATIONS_REFERENCE
   - Année 2022
   - Variable à retenir : GEO, OBS_VALUE
-  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` ajouter le nombre de conseillers municipaux à partir du fichier `conseillers.csv`
-  - Fichier traité = `data/population_municipale_2022_et_conseillers.csv`
+  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` ajouter le nombre de conseillers municipaux à partir du fichier `conseillers.csv`, et la proportion de locataires.
+  - Fichier traité = `data/popmun_conseillers_locataires_2022.csv`
+
+- **Recensement de la population - Logements**
+  - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_PRINC
+  - Identifiant : DS_RP_LOGEMENT_PRINC
+  - Année 2022
+  - Variable à retenir : GEO, RP_MEASURE (DWELLINGS_POPSIZE), L_STAY (_T)
+  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour additionner les catégories de locataires, calculer la proportion de locataires et le ratio idéal de conseillers locataires.
+  - Fichier traité = `data/popmun_conseillers_locataires_2022.csv`
     
-- **Nombre de conseillers munincipaux selon la population**
+- **Echelle du nombre de conseillers munincipaux selon la population**
   -   Fichier créé par les développeurs
   -   Lien source : https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006070633/LEGISCTA000006164544/
   -   Fichier est utilisé pour calculer le nombre de connseillers par commune dans le notebook `traitement_data.ipynb`
   -   Fichier = `data/conseillers.csv`
 
-- **Code officiel géographique au 1er janvier 2022 - Communes**
-  - Lien : https://www.insee.fr/fr/information/6051727
-  - Fichier traité par les développeur pour réduire sa taille
-  - Fichier traité = `data/commune_2022-reduced.csv`
+- **Code officiel géographique au 1er janvier 2025 - Communes**
+  - Lien : https://www.insee.fr/fr/information/8377162)
+  - Fichier est utilisé pour la barre de recherche des communes par libellé
+  - Traitement des données dans le notebook `traitement_data.ipynb`
+  - Fichier traité = `data/commune_2025_reduced.csv`
  
 ## Prochaines étapes :
 
