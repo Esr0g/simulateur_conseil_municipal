@@ -1,5 +1,5 @@
-from flask import Blueprint
+# app/errors/__init__.py
 
-bp = Blueprint('errors', __name__)
+from .handlers import register_exception_handlers
 
-from app.errors import handlers
+__all__ = ["register_exception_handlers"]

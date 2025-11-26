@@ -1,23 +1,25 @@
-from werkzeug.exceptions import HTTPException
-from app.errors import bp
-from flask import current_app
-from app.api.responses import error_response
+# app/errors/handlers.py
 
-def bad_request(error):
-    msg = getattr(error, "description", None)
-    return error_response(404, msg)
+from fastapi import Request, HTTPException
+from fastapi.responses import JSONResponse
+from app.utils.responses import error_response
 
 
-@bp.app_errorhandler(404)
-def not_found_error(error):
-   return error_response(404, error.description)
+def register_exception_handlers(app):
 
+    # Handler générique pour les erreurs HTTP
+    @app.exception_handler(HTTPException)
+    async def http_exception_handler(request: Request, exc: HTTPException):
+        return error_response(exc.status_code, message=exc.detail)
 
-@bp.app_errorhandler(500)
-def internal_error(error):
-    return error_response(500)
+    # 404 Not Found (FastAPI ne passe pas par HTTPException pour ça)
+    @app.exception_handler(404)
+    async def not_found_handler(request: Request, exc):
+        return error_response(404, message="Ressource introuvable")
 
-@bp.errorhandler(HTTPException)
-def handle_exception(e):
-    current_app.logger.warning(e)
-    return error_response(e.code, getattr(e, "description", None))
+    # 500 Internal Server Error
+    @app.exception_handler(Exception)
+    async def internal_error_handler(request: Request, exc: Exception):
+        # Log interne si besoin :
+        # print(exc)
+        return error_response(500, message="Une erreur interne est survenue")
