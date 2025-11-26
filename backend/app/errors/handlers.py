@@ -1,17 +1,11 @@
-from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.exceptions import HTTPException
 from app.errors import bp
 from flask import current_app
+from app.api.responses import error_response
 
-
-def error_response(status_code, message=None):
-    payload = {'error': HTTP_STATUS_CODES.get(status_code, message)}
-    if message:
-        payload['message'] = message
-    return payload, status_code
-
-def bad_request(message):
-    return error_response(400, message)
+def bad_request(error):
+    msg = getattr(error, "description", None)
+    return error_response(404, msg)
 
 
 @bp.app_errorhandler(404)
@@ -26,4 +20,4 @@ def internal_error(error):
 @bp.errorhandler(HTTPException)
 def handle_exception(e):
     current_app.logger.warning(e)
-    return error_response(e.code)
+    return error_response(e.code, getattr(e, "description", None))

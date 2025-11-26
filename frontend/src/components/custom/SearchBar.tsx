@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react"
-import { type BaseCommune, fetchCommunes, type BaseCommuneResponse } from "@/models/commune"
+import { type BaseCommune, fetchBaseCommunes, type BaseCommuneResponse } from "@/models/commune"
 
 import { AutoComplete } from "@/components/ui/autocomplete"
 
 
 export function SearchBar({ onChange }: { onChange: (val: BaseCommune) => void }) {
     const [selectedCommune, SetSelectedCommune] = useState<BaseCommune | undefined>();
-    const [communes, setCommunes] = useState<BaseCommuneResponse>([]);
-    const [inputValue, setInputValue] = useState(selectedCommune?.nom || "");
+    const [communes, setCommunes] = useState<BaseCommune[]>([]);
+    const [inputValue, setInputValue] = useState(selectedCommune?.libelle || "");
 
     useEffect(() => {
         if (!inputValue) {
@@ -18,7 +18,7 @@ export function SearchBar({ onChange }: { onChange: (val: BaseCommune) => void }
         // debounce pour éviter de spamer le back
         const handler = setTimeout(() => {
             const fetchData = async () => {
-                const data = await fetchCommunes(inputValue);
+                const data = await fetchBaseCommunes(inputValue);
                 setCommunes(data);
             }
             fetchData();

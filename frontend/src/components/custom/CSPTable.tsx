@@ -1,17 +1,18 @@
-import type { CommuneCSP } from "@/models/commune";
+import type { Commune } from "@/models/commune";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import HoverInfos from "@/components/custom/HoverInfos";
 import { useEffect, useState } from "react";
 
-export default function CSPTable({ data }: { data: CommuneCSP }) {
+export default function CSPTable({ data }: { data: Commune | null }) {
     const [totPopCSP, setTotPopCSP] = useState(0);
 
     // Somme des CSP pour calculer le ratio des conseillers et le poids
     useEffect(() => {
-        if (data.length === 0) return;
+        if (!data) return;
+        if (data.csp.length === 0) return;
 
         let somme = 0;
-        for (const d of data) {
+        for (const d of data.csp) {
             somme += d.population_csp;
         }
         setTotPopCSP(somme);
@@ -39,8 +40,8 @@ export default function CSPTable({ data }: { data: CommuneCSP }) {
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {data && data.map((csp) => (
-                    <TableRow key={csp.csp_code}>
+                {data && data.csp && data.csp.map((csp) => (
+                    <TableRow key={csp.code_csp}>
                         <TableCell className="text-[0.75rem] sm:text-sm wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
                         <TableCell className="text-[0.75rem] sm:text-sm text-center">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
                         <TableCell className="text-[0.75rem] sm:text-sm text-center">{csp.nb_conseillers_csp}</TableCell>

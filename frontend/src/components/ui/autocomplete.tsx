@@ -12,12 +12,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 import { Check, SearchIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { BaseCommune, BaseCommuneResponse } from "@/models/commune"
+import type { BaseCommune } from "@/models/commune"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "./input-group"
 
 
 type AutoCompleteProps = {
-    options: BaseCommuneResponse
+    options: BaseCommune[]
     emptyMessage: string
     inputValue: string
     setInputValue: (value: string) => void
@@ -59,7 +59,7 @@ export const AutoComplete = ({
             // This is not a default behaviour of the <input /> field
             if (event.key === "Enter" && input.value !== "") {
                 const optionToSelect = options.find(
-                    (option) => option.nom === input.value,
+                    (option) => option.libelle === input.value,
                 )
                 if (optionToSelect) {
                     setSelected(optionToSelect)
@@ -76,15 +76,15 @@ export const AutoComplete = ({
 
     const handleBlur = useCallback(() => {
         setOpen(false)
-        if (selected && inputValue === selected.nom) {
-            setInputValue(selected.nom)
+        if (selected && inputValue === selected.libelle) {
+            setInputValue(selected.libelle)
         }
 
     }, [selected])
 
     const handleSelectOption = useCallback(
         (selectedOption: BaseCommune) => {
-            setInputValue(selectedOption.nom)
+            setInputValue(selectedOption.libelle)
 
             setSelected(selectedOption)
             onValueChange?.(selectedOption)
@@ -138,11 +138,11 @@ export const AutoComplete = ({
                         {options.length > 0 && !isLoading ? (
                             <CommandGroup>
                                 {options.map((option) => {
-                                    const isSelected = selected?.code === option.code
+                                    const isSelected = selected?.code_commune === option.code_commune
                                     return (
                                         <CommandItem
-                                            key={option.code}
-                                            value={option.code}
+                                            key={option.code_commune}
+                                            value={option.code_commune}
                                             onMouseDown={(event) => {
                                                 event.preventDefault()
                                                 event.stopPropagation()
@@ -154,7 +154,7 @@ export const AutoComplete = ({
                                             )}
                                         >
                                             {isSelected ? <Check className="w-4" /> : null}
-                                            {`${option.nom} (${option.code.slice(0, 2)})`}
+                                            {`${option.libelle} (${option.code_commune.slice(0, 2)})`}
                                         </CommandItem>
                                     )
                                 })}

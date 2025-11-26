@@ -1,12 +1,12 @@
-import { fetchCommuneData, type BaseCommune, type CommuneCSP } from "@/models/commune";
+import { fetchCommuneData, type BaseCommune, type Commune } from "@/models/commune";
 import { useEffect, useState } from "react";
 import { SearchBar } from "@/components/custom/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 import { useNavigate, useParams } from "react-router";
 
-export default function SearchCard({ onDataSet, data }: { onDataSet: (data: CommuneCSP) => void, data: CommuneCSP }) {
-    const [commune, setCommune] = useState<BaseCommune | undefined>();
+export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Commune | null) => void, data: Commune | null }) {
+    const [commune, setCommune] = useState<BaseCommune | null>(null);
     let navigate = useNavigate();
     const { code } = useParams<{ code?: string }>();
 
@@ -14,16 +14,16 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
     const fetchData = async () => {
         if (!commune && !code) return;
 
-        const data = await fetchCommuneData(commune?.code || code || "")
-        if (data.length === 0) {
+        const data_tmp = await fetchCommuneData(commune?.code_commune || code || "")
+        if (data_tmp === null) {
             navigate("/", { replace: true });
             return;
         }
 
-        setCommune({ nom: data[0].nom, code: data[0].code })
-        onDataSet(data);
+        setCommune({ libelle: data_tmp.libelle, code_commune: data_tmp.code_commune, code_postal: data_tmp.code_postal })
+        onDataSet(data_tmp);
 
-        navigate(`/${data[0].code}`, { replace: true })
+        navigate(`/${data_tmp.code_commune}`, { replace: true })
     }
 
     // Permet de retirer de l'url le code si invalide
@@ -35,13 +35,13 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
             return;
         }
 
-        setCommune({ nom: "", code: code })
+        setCommune({ libelle: "", code_commune: code, code_postal: [] })
         fetchData();
     }, [code, navigate])
 
     const isButtonDisabled = (): boolean => {
         if (!commune) return true;
-        if (data.length > 0 && data[0].code === commune.code) return true;
+        if (data && data.code_commune === commune.code_commune) return true;
         return false;
     }
 

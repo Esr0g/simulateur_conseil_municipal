@@ -1,12 +1,12 @@
 import { useState } from "react"
-import { type CommuneCSP } from "@/models/commune";
+import { type Commune } from "@/models/commune";
 import Header from "./components/custom/Header";
 import SearchCard from "./components/custom/SearchCard";
 import DataCard from "./components/custom/DataCard";
 
 
 function App() {
-    const [communeData, setCommuneData] = useState<CommuneCSP>([]);
+    const [communeData, setCommuneData] = useState<Commune | null>(null);
 
     return (
         <div className="flex flex-col gap-4 items-center  bg-(--color-background) w-full sm:w-3/4 xl:w-9/12 m-auto" >
