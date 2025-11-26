@@ -18,7 +18,13 @@ export default function DataCard({ data }: { data: Commune | null }) {
             <div className="grid grid-cols-1 sm:grid-cols-2 border-t text-sm">
                 <div className="px-4 py-2 sm:border-r">
                     <h4 className="mb-2">Population municipale</h4>
-                    <span className="font-extrabold text-base"> {(data && data.csp.length > 0 && data.population_municipale) ? data.population_municipale.toLocaleString("fr-FR") : " —"}</span>
+                    {data && data.population_municipale && <span className="font-extrabold text-base">
+                        {data.population_municipale.toLocaleString("fr-FR")}
+                    </span>}
+                    {data && !data.population_municipale && <span className="text-base italic text-[0.6rem]">
+                        Aucune donnée disponible pour cette commune.
+                    </span>}
+                    {!data && <span className="text-base font-extrabold ">&nbsp;—</span>}
                 </div>
                 <div className="px-4 py-2 border-t sm:border-none">
                     <h4 className="mb-2">
@@ -34,12 +40,17 @@ export default function DataCard({ data }: { data: Commune | null }) {
                             </a>
                         </HoverInfos>
                     </h4>
-                    <span className="font-extrabold text-base"> {(data && data.csp.length > 0) ? data.total_conseillers : " —"}</span>
+                    {data && data.total_conseillers && <span className="font-extrabold text-base">{data.total_conseillers}</span>}
+                    {data && !data.total_conseillers && <span className="text-base italic text-[0.6rem]">Aucune donnée disponible pour cette commune.</span>}
+                    {!data && <span className="font-extrabold text-base">&nbsp;—</span>}
                 </div>
             </div>
             <CSPTable data={data} />
             {!data && <span className="text-[0.6rem] text-(--color-secondary-foreground) text-center mt-4 mx-4">
                 Aucune commune sélectionnée : veuillez en choisir une pour voir la répartition des élu.e.s par CSP.
+            </span>}
+            {data && data.csp.length === 0 && <span className="text-[0.6rem] text-(--color-secondary-foreground) text-center mt-4 mx-4">
+                Aucune donnée disponible pour cette commune.
             </span>}
             <Separator className="my-4" />
             <div className="flex sm:flex-row flex-col justify-around mx-4 mb-4 gap-4">
@@ -50,7 +61,7 @@ export default function DataCard({ data }: { data: Commune | null }) {
                             {data.taux_pauvrete} % soit {Math.round(data.taux_pauvrete * data.total_conseillers / 100)} élu.e.s
                         </span> :
                         <span className="italic text-[0.6rem]">
-                            Acune donnée disponible pour cette commune</span>) :
+                            Aucune donnée disponible pour cette commune.</span>) :
                         <span className="font-extrabold text-base inline-block w-full text-center">&nbsp;—</span>}
                 </div>
                 <div className="text-sm bg-(--color-background) rounded-xl flex-1 p-2">
@@ -60,7 +71,7 @@ export default function DataCard({ data }: { data: Commune | null }) {
                             {(data.total_locataires * 100 / data.total_loc_et_prop).toFixed(2)} % soit {Math.round(data.total_locataires / data.total_loc_et_prop * data.total_conseillers)} élu.e.s
                         </span> :
                         <span className="italic text-[0.6rem]">
-                            Acune donnée disponible pour cette commune</span>) :
+                            Aucune donnée disponible pour cette commune.</span>) :
                         <span className="font-extrabold text-base inline-block w-full text-center">&nbsp;—</span>}
                 </div>
             </div >

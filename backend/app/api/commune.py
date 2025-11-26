@@ -94,35 +94,36 @@ def searchCommunesByCode(code):
                         """, [code]).fetch_df()
 
     res = []
-    tot_pop_csp = 0
+    if not csp.empty:
+        tot_pop_csp = 0
 
-    res = csp.to_dict(orient="records") 
-    tot_pop_csp = sum(r["population_csp"] for r in res)
-    
-    #On met dans une liste la partie entière et la fraction puis on trie sur la fraction
-    nb_conseillers = commune[4]
-    temp_list = []
-    tot_conseillers = 0
-    for r in res:
-        fraction, entier = math.modf(r["population_csp"] * nb_conseillers / tot_pop_csp)
-        temp_list.append([fraction, entier, r["code_csp"]])
-        tot_conseillers += entier
+        res = csp.to_dict(orient="records") 
+        tot_pop_csp = sum(r["population_csp"] for r in res)
+        
+        #On met dans une liste la partie entière et la fraction puis on trie sur la fraction
+        nb_conseillers = commune[4]
+        temp_list = []
+        tot_conseillers = 0
+        for r in res:
+            fraction, entier = math.modf(r["population_csp"] * nb_conseillers / tot_pop_csp)
+            temp_list.append([fraction, entier, r["code_csp"]])
+            tot_conseillers += entier
 
-    temp_list.sort(reverse=True);
+        temp_list.sort(reverse=True);
 
-    # On ajoute 1 à la partie entière de l'élement qui à la fraciton la plus élevée
-    # jusqu'à ce qu'on atteigne le nombre de conseillers
-    i = 0;
-    while tot_conseillers != nb_conseillers:
-        temp_list[i][1] += 1
-        tot_conseillers += 1
-        i = (i + 1) % len(temp_list)
+        # On ajoute 1 à la partie entière de l'élement qui à la fraciton la plus élevée
+        # jusqu'à ce qu'on atteigne le nombre de conseillers
+        i = 0;
+        while tot_conseillers != nb_conseillers:
+            temp_list[i][1] += 1
+            tot_conseillers += 1
+            i = (i + 1) % len(temp_list)
 
-    # On ajoute une colonne qui contient le nombre exact de conseiller en fonction de la CSP
-    entiers_par_csp = {t[2]: t[1] for t in temp_list} 
+        # On ajoute une colonne qui contient le nombre exact de conseiller en fonction de la CSP
+        entiers_par_csp = {t[2]: t[1] for t in temp_list} 
 
-    for r in res:
-        r["nb_conseillers_csp"] = entiers_par_csp[r["code_csp"]]
+        for r in res:
+            r["nb_conseillers_csp"] = entiers_par_csp[r["code_csp"]]
 
     return success_response(data={
         "code_commune": commune[0],
