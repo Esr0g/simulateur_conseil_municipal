@@ -2,6 +2,8 @@ import axios from "axios";
 import { z } from "zod";
 import { createApiResponseSchema } from "./api";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const communeBaseSchema = z.object({
     code_commune: z.string().length(5),
     libelle: z.string(),
@@ -32,7 +34,7 @@ export type Commune = z.infer<typeof communeSchema>;
 
 
 export async function fetchBaseCommunes(inputValue: string): Promise<BaseCommune[]> {
-    const response = await axios.get("http://localhost:5000/api/communes", {
+    const response = await axios.get(`${API_URL}communes`, {
         params: { nom: inputValue }
     });
 
@@ -46,7 +48,7 @@ export async function fetchBaseCommunes(inputValue: string): Promise<BaseCommune
 }
 
 export async function fetchCommuneData(code: string): Promise<Commune | null> {
-    const response = await axios.get(`http://localhost:5000/api/communes/${code}`);
+    const response = await axios.get(`${API_URL}communes/${code}`);
 
     if (!response.data.success) {
         throw new Error("Erreur : " + response.data.error);
