@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { type BaseCommune, fetchBaseCommunes, type BaseCommuneResponse } from "@/models/commune"
+import { type BaseCommune, fetchBaseCommunes } from "@/models/commune"
 
 import { AutoComplete } from "@/components/ui/autocomplete"
 

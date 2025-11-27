@@ -9,8 +9,8 @@ def create_app() -> FastAPI:
     # CORS
     origins = [
         "http://localhost:5173",
-        "http://host.docker.internal:5173",
-        "http://192.168.1.41:5173"
+        "http://57.131.25.249",
+        "https://simulateurparitesociale.duckdns.org"
     ]
     app.add_middleware(
         CORSMiddleware,

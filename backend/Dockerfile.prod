@@ -1,0 +1,17 @@
+# Backend production Dockerfile
+FROM python:3.14-slim
+
+WORKDIR /app
+
+# Copier requirements et code
+COPY requirements.txt .
+COPY . /app
+
+# Installer les dépendances directement
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Exposer le port FastAPI
+EXPOSE 8000
+
+# Lancer l'application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
