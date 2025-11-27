@@ -1,0 +1,7 @@
+fastapi==0.122.0
+uvicorn==0.38.0
+pandas==2.3.3
+duckdb==1.4.2
+RapidFuzz==3.14.3
+Unidecode==1.4.0
+pyarrow==22.0.0

@@ -1,3 +1,2 @@
-venv
-base_data
-final_data
+.venv
+/venv

@@ -31,26 +31,43 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
   - Année 2022
   - Variables à retenir : GEO, PCS, OBS_VALUE sur la période 2022, pour les personnes de 15 ans ou plus, indifférent de l'âge
   - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour réduire sa taille.
-  - Fichier traité = `data/population_communes_2022_csp.csv`
+  - Fichier traité = `scripts/data/processed/population_communes_csp_2022.parquet`
 
 - **Recensement de la population - Population de référence**
   - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_POPULATIONS_REFERENCE 
   - Identifiant : DS_POPULATIONS_REFERENCE
   - Année 2022
   - Variable à retenir : GEO, OBS_VALUE
-  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` ajouter le nombre de conseillers municipaux à partir du fichier `conseillers.csv`
-  - Fichier traité = `data/population_municipale_2022_et_conseillers.csv`
+  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` ajouter le nombre de conseillers municipaux à partir du fichier `conseillers.csv`, et la proportion de locataires.
+  - Fichier traité = `scripts/data/processed/communes.parquet`
+
+- **Recensement de la population - Logements**
+  - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_PRINC
+  - Identifiant : DS_RP_LOGEMENT_PRINC
+  - Année 2022
+  - Variable à retenir : GEO, RP_MEASURE (DWELLINGS_POPSIZE)
+  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour calculer la proportion de locataires.
+  - Fichier traité = `scripts/data/processed/communes.parquet`
+
+- **Filosofi - Niveau de vie médian et taux de pauvreté par tranche d’âge du référent fiscal**
+  - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_FILOSOFI_AGE_TP_NIVVIE
+  - Identifiant : DSD_FILOSOFI_AGE_TP_MED_NIVVIE
+  - Année 2021
+  - Variable à retenir : GEO, OBS_VALUE, FILOSOFI_MEASURE (PR_MD60)
+  - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour calculer la proportion de locataires.
+  - Fichier traité = `scripts/data/processed/communes.parquet`
     
-- **Nombre de conseillers munincipaux selon la population**
+- **Echelle du nombre de conseillers munincipaux selon la population**
   -   Fichier créé par les développeurs
   -   Lien source : https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006070633/LEGISCTA000006164544/
   -   Fichier est utilisé pour calculer le nombre de connseillers par commune dans le notebook `traitement_data.ipynb`
-  -   Fichier = `data/conseillers.csv`
+  -   Fichier = `scripts/data/raw_data/conseillers.csv`
 
-- **Code officiel géographique au 1er janvier 2022 - Communes**
-  - Lien : https://www.insee.fr/fr/information/6051727
-  - Fichier traité par les développeur pour réduire sa taille
-  - Fichier traité = `data/commune_2022-reduced.csv`
+- **Code officiel géographique au 1er janvier 2025 - Communes**
+  - Lien : https://www.insee.fr/fr/information/8377162)
+  - Fichier est utilisé pour la barre de recherche des communes par libellé
+  - Traitement des données dans le notebook `traitement_data.ipynb`
+  - Fichier traité = `scripts/data/processed/communes.parquet`
  
 ## Prochaines étapes :
 

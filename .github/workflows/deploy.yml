@@ -1,0 +1,87 @@
+name: CI/CD Docker + GHCR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6.0.0
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3.6.0
+        with:
+          registry: ghcr.io
+          username: Esr0g
+          password: ${{ secrets.GHCR_TOKEN }}
+
+      - name: Build and push backend image
+        run: |
+          IMAGE_BACKEND=ghcr.io/esr0g/simulateur_conseil_municipal/webapp-mun-backend:latest
+          docker build -f backend/Dockerfile.prod -t $IMAGE_BACKEND backend
+          docker push $IMAGE_BACKEND
+
+      - name: Build and push frontend image
+        run: |
+          IMAGE_FRONTEND=ghcr.io/esr0g/simulateur_conseil_municipal/webapp-mun-frontend:latest
+          docker build -f frontend/Dockerfile.prod -t $IMAGE_FRONTEND frontend
+          docker push $IMAGE_FRONTEND
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Upload data folder to VPS
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ vars.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          source: "./data/processed/**"
+          target: "/home/${{ secrets.VPS_USER }}/app/data"
+          rm: true
+          strip_components: 2
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.9.1
+        with:
+          ssh-private-key: ${{ secrets.VPS_SSH_KEY }}
+
+      - name: Deploy on VPS
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VPS_USER }}@${{ vars.VPS_HOST }} -p ${{ secrets.VPS_SSH_PORT }} << 'EOF'
+            set -e
+
+            # Variables
+            PROJECT_PATH="${{ secrets.VPS_PATH }}"
+            IMAGE_BACKEND="ghcr.io/esr0g/simulateur_conseil_municipal/webapp-mun-backend:latest"
+            IMAGE_FRONTEND="ghcr.io/esr0g/simulateur_conseil_municipal/webapp-mun-frontend:latest"
+
+            mkdir -p app
+            cd app/
+
+            # Se connecter à GHCR
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ vars.GHCR_USERNAME }}" --password-stdin
+
+            # Pull et relancer backend
+            docker pull $IMAGE_BACKEND
+            docker stop backend || true
+            docker rm backend || true
+            docker run -d --name backend -p 8000:8000 -e ENV=production -e PORT=8000 -v "/home/${{ secrets.VPS_USER }}/app/data:/app/data" $IMAGE_BACKEND
+
+            # Pull et relancer frontend
+            docker pull $IMAGE_FRONTEND
+            docker stop frontend || true
+            docker rm frontend || true
+            docker run -d --name frontend -p 3000:3000 $IMAGE_FRONTEND
+      
