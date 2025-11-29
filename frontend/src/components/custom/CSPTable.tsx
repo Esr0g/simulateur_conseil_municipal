@@ -42,9 +42,9 @@ export default function CSPTable({ data }: { data: Commune | null }) {
             <TableBody>
                 {data && data.csp && data.csp.map((csp) => (
                     <TableRow key={csp.code_csp}>
-                        <TableCell className="text-[0.75rem] sm:text-sm wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
-                        <TableCell className="text-[0.75rem] sm:text-sm text-center">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
-                        <TableCell className="text-[0.75rem] sm:text-sm text-center">{csp.nb_conseillers_csp}</TableCell>
+                        <TableCell className="text-base wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
+                        <TableCell className="text-base text-center">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
+                        <TableCell className="text-base text-center font-bold">{csp.nb_conseillers_csp}</TableCell>
                     </TableRow>))}
             </TableBody>
         </Table>
