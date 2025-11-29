@@ -29,7 +29,7 @@ export default function CSPTable({ data }: { data: Commune | null }) {
                         Poids dans le population
                     </TableHead>
                     <TableHead className="text-center wrap-break-word whitespace-normal">
-                        Nombre d'élu.e.s
+                        Nombre d'élu.e.s simulé
                         <HoverInfos>
                             Le ratio des CSP dans la population ne concerne que les personnes de 15 ans ou plus d'après&nbsp;
                             <a href="https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_POPULATION_COMP" target="_blank" className="underline">

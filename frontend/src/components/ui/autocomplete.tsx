@@ -6,7 +6,7 @@ import {
     Command,
 } from "@/components/ui/command"
 import { Command as CommandPrimitive } from "cmdk"
-import { useState, useRef, useCallback, type KeyboardEvent, type ChangeEvent } from "react"
+import { useState, useRef, useCallback, type ChangeEvent } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
 

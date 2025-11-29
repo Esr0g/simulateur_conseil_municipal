@@ -1,5 +1,5 @@
 import { fetchCommuneData, type BaseCommune, type Commune } from "@/models/commune";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { SearchBar } from "@/components/custom/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
