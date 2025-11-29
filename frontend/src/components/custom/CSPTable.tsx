@@ -19,7 +19,7 @@ export default function CSPTable({ data }: { data: Commune | null }) {
     }, [data])
 
     return (
-        <Table className="text-[0.78rem] sm:text-sm w-full table-fixed sm:table-auto">
+        <Table className="text-sm w-full table-fixed sm:table-auto">
             <TableHeader>
                 <TableRow className="bg-(--color-background) hover:bg-(--color-background)">
                     <TableHead className="wrap-break-word whitespace-normal w-1/3 sm:w-auto pl-4">

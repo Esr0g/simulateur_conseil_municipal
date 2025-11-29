@@ -6,10 +6,9 @@ from app.errors import register_exception_handlers
 def create_app() -> FastAPI:
     app = FastAPI(title="Backend Simulateur de parité sociale")
 
-    # CORS
     origins = [
         "http://localhost:5173",
-        "http://57.131.25.249",
+        "http://192.168.1.31:5173",
         "https://simulateurparitesociale.duckdns.org"
     ]
     app.add_middleware(

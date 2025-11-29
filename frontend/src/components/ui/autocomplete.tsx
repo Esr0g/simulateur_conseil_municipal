@@ -6,7 +6,7 @@ import {
     Command,
 } from "@/components/ui/command"
 import { Command as CommandPrimitive } from "cmdk"
-import { useState, useRef, useCallback, type KeyboardEvent } from "react"
+import { useState, useRef, useCallback, type KeyboardEvent, type ChangeEvent } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -44,39 +44,22 @@ export const AutoComplete = ({
     const [isOpen, setOpen] = useState(false)
     const [selected, setSelected] = useState<BaseCommune>(value as BaseCommune)
 
-    const handleKeyDown = useCallback(
-        (event: KeyboardEvent<HTMLDivElement>) => {
-            const input = inputRef.current
-            if (!input) {
-                return
-            }
+    const handleOnChange = useCallback(
+        (event: ChangeEvent<HTMLInputElement>) => {
 
             // Keep the options displayed when the user is typing
             if (!isOpen) {
                 setOpen(true)
             }
 
-            // This is not a default behaviour of the <input /> field
-            if (event.key === "Enter" && input.value !== "") {
-                const optionToSelect = options.find(
-                    (option) => option.libelle === input.value,
-                )
-                if (optionToSelect) {
-                    setSelected(optionToSelect)
-                    onValueChange?.(optionToSelect)
-                }
-            }
-
-            if (event.key === "Escape") {
-                input.blur()
-            }
+            setInputValue(event.target.value)
         },
-        [isOpen, options, onValueChange],
+        [isOpen],
     )
 
     const handleBlur = useCallback(() => {
         setOpen(false)
-        if (selected && inputValue === selected.libelle) {
+        if (selected) {
             setInputValue(selected.libelle)
         }
 
@@ -89,8 +72,6 @@ export const AutoComplete = ({
             setSelected(selectedOption)
             onValueChange?.(selectedOption)
 
-            // This is a hack to prevent the input from being focused after the user selects an option
-            // We can call this hack: "The next tick"
             setTimeout(() => {
                 inputRef?.current?.blur()
             }, 0)
@@ -101,20 +82,20 @@ export const AutoComplete = ({
     )
 
     return (
-        <Command onKeyDown={handleKeyDown} shouldFilter={false} className="sm:flex-1">
+        <Command shouldFilter={false} className="sm:flex-1">
             <CommandInput
-                ref={inputRef}
-                value={inputValue}
-                onValueChange={isLoading ? undefined : setInputValue}
-                onBlur={handleBlur}
-                onFocus={() => setOpen(true)}
-                placeholder={placeholder}
-                disabled={disabled}
                 className="text-base"
                 asChild
             >
                 <InputGroup>
-                    <InputGroupInput placeholder={placeholder} value={inputValue} onChange={(e) => e.preventDefault()} />
+                    <InputGroupInput
+                        onBlur={handleBlur}
+                        disabled={disabled}
+                        onFocus={() => setOpen(true)}
+                        ref={inputRef}
+                        placeholder={placeholder}
+                        value={inputValue}
+                        onChange={handleOnChange} />
                     <InputGroupAddon>
                         <SearchIcon />
                     </InputGroupAddon>
@@ -123,7 +104,7 @@ export const AutoComplete = ({
             <div className="relative mt-1">
                 <div
                     className={cn(
-                        "animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl bg-white outline-none",
+                        "search-options animate-in fade-in-0 zoom-in-95 absolute top-0 z-10 w-full rounded-xl bg-white outline-none",
                         isOpen ? "block" : "hidden",
                     )}
                 >

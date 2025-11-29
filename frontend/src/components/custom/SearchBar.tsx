@@ -36,7 +36,6 @@ export function SearchBar({ onChange }: { onChange: (val: BaseCommune) => void }
         onChange(commune);
     }
 
-
     return (
         <AutoComplete
             options={communes}

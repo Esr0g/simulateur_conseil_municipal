@@ -1,5 +1,5 @@
 import { fetchCommuneData, type BaseCommune, type Commune } from "@/models/commune";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { SearchBar } from "@/components/custom/SearchBar";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
@@ -11,7 +11,8 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
     const { code } = useParams<{ code?: string }>();
 
     // Récupère les communes soit quand un code est présent dans l'url soit lorque le bouton "simuler" est pressé
-    const fetchData = async () => {
+    const fetchData = async (e?: FormEvent<HTMLFormElement>) => {
+        e?.preventDefault()
         if (!commune && !code) return;
 
         const data_tmp = await fetchCommuneData(commune?.code_commune || code || "")
@@ -45,15 +46,36 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
         return false;
     }
 
+    const handleKeyDown = (event: KeyboardEvent) => {
+        if (event.key === "Enter" && !isButtonDisabled()) {
+            fetchData();
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [handleKeyDown]);
+
     return (
         <div className="flex flex-col gap-1 w-full bg-card sm:rounded-sm md:rounded-md lg:rounded-lg xl:rounded-xl border-y sm:border px-4 py-2.5">
             <h3 className="scroll-m-20 text-md tracking-tight">Sélectionner une commune</h3>
-            <div className="flex flex-col sm:flex-row sm:gap-4 sm:items-center">
+            <form className="flex flex-col sm:flex-row sm:gap-4 sm:items-center" onSubmit={fetchData}>
                 <SearchBar onChange={setCommune} />
-                <Button variant="default" className="self-center mt-2 sm:mt-0  sm:mr" onClick={fetchData} disabled={isButtonDisabled()}>
+                <Button
+                    type="submit"
+                    variant="default"
+                    className="self-center text-base mt-2 sm:mt-0  sm:mr"
+                    disabled={isButtonDisabled()}
+                    size="lg">
                     <Play /> Simuler
                 </Button>
-            </div>
+            </form>
         </div>
     )
 }
