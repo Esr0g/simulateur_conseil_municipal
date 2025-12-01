@@ -9,7 +9,7 @@ def create_app() -> FastAPI:
     origins = [
         "http://localhost:5173",
         "http://192.168.1.31:5173",
-        "https://www.simulateurparitesociale.fr"
+        "https://www.simulateurparitesociale.fr",
         "https://simulateurparitesociale.fr"
     ]
     app.add_middleware(
