@@ -84,7 +84,7 @@ export const AutoComplete = ({
     return (
         <Command shouldFilter={false} className="sm:flex-1">
             <CommandInput
-                className="text-base"
+                className="text-lg"
                 asChild
             >
                 <InputGroup>
@@ -142,7 +142,7 @@ export const AutoComplete = ({
                             </CommandGroup>
                         ) : null}
                         {!isLoading ? (
-                            <CommandPrimitive.Empty className="select-none rounded-sm px-2 py-3 text-center text-sm">
+                            <CommandPrimitive.Empty className="select-none rounded-sm px-2 py-3 text-center text-lg">
                                 {emptyMessage}
                             </CommandPrimitive.Empty>
                         ) : null}

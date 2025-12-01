@@ -64,7 +64,7 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
 
     return (
         <div className="flex flex-col gap-1 w-full bg-card sm:rounded-sm md:rounded-md lg:rounded-lg xl:rounded-xl border-y sm:border px-4 py-2.5">
-            <h3 className="scroll-m-20 text-md tracking-tight">Sélectionner une commune</h3>
+            <h3 className="scroll-m-20 text-lg tracking-tight">Sélectionner une commune</h3>
             <form className="flex flex-col sm:flex-row sm:gap-4 sm:items-center" onSubmit={fetchData}>
                 <SearchBar onChange={setCommune} />
                 <Button

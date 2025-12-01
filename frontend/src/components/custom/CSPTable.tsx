@@ -19,16 +19,16 @@ export default function CSPTable({ data }: { data: Commune | null }) {
     }, [data])
 
     return (
-        <Table className="text-sm w-full table-fixed sm:table-auto">
+        <Table className="text-base w-full table-fixed sm:table-auto">
             <TableHeader>
-                <TableRow className="bg-(--color-background) hover:bg-(--color-background)">
+                <TableRow className="bg-(--color-background) hover:bg-(--color-background) text-lg">
                     <TableHead className="wrap-break-word whitespace-normal w-1/3 sm:w-auto pl-4">
                         Catégories socio-professionnelles
                     </TableHead>
-                    <TableHead className="text-center wrap-break-word whitespace-normal">
+                    <TableHead className="text-right wrap-break-word whitespace-normal">
                         Poids dans le population
                     </TableHead>
-                    <TableHead className="text-center wrap-break-word whitespace-normal">
+                    <TableHead className="text-right wrap-break-word whitespace-normal">
                         Nombre d'élu.e.s simulé
                         <HoverInfos>
                             Le ratio des CSP dans la population ne concerne que les personnes de 15 ans ou plus d'après&nbsp;
@@ -42,9 +42,9 @@ export default function CSPTable({ data }: { data: Commune | null }) {
             <TableBody>
                 {data && data.csp && data.csp.map((csp) => (
                     <TableRow key={csp.code_csp}>
-                        <TableCell className="text-base wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
-                        <TableCell className="text-base text-center">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
-                        <TableCell className="text-base text-center font-bold">{csp.nb_conseillers_csp}</TableCell>
+                        <TableCell className="wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
+                        <TableCell className="text-right pr-9">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
+                        <TableCell className="text-right font-bold pr-12">{csp.nb_conseillers_csp}</TableCell>
                     </TableRow>))}
             </TableBody>
         </Table>
