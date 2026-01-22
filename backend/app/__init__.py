@@ -9,8 +9,8 @@ def create_app() -> FastAPI:
     origins = [
         "http://localhost:5173",
         "http://192.168.1.31:5173",
-        "http://www.simulateurconseilmunicipal.fr",
-        "http://simulateurconseilmunicipal.fr"
+        "https://www.simulateurconseilmunicipal.fr",
+        "https://simulateurconseilmunicipal.fr"
     ]
     app.add_middleware(
         CORSMiddleware,
