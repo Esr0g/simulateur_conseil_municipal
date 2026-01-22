@@ -20,6 +20,8 @@ const cspSchema = z.object({
     nb_conseillers_csp: z.number(),
 })
 
+export type CSP = z.infer<typeof cspSchema>
+
 const communeSchema = communeBaseSchema.extend({
     population_municipale: z.number().nullable(),
     total_conseillers: z.number().nullable(),

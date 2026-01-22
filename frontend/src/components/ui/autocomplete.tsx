@@ -82,12 +82,13 @@ export const AutoComplete = ({
     )
 
     return (
-        <Command shouldFilter={false} className="sm:flex-1">
+        <Command shouldFilter={false} className="w-1/2">
             <CommandInput
                 className="text-lg"
                 asChild
             >
-                <InputGroup>
+                <InputGroup
+                    className="bg-card rounded-xl shadow-[0px_25px_50px_-12px_rgba(0,0,0,0.25)]" >
                     <InputGroupInput
                         onBlur={handleBlur}
                         disabled={disabled}
