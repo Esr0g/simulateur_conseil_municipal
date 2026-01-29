@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 export default function DataCard({ data }: { data: Commune | null }) {
 
     return (
-        <div className="flex flex-col w-full bg-card sm:rounded-sm md:rounded-md lg:rounded-lg xl:rounded-xl border-y sm:border sm:mb-4">
+        <div className="flex flex-col w-full bg-card sm:rounded-sm md:rounded-md lg:rounded-lg xl:rounded-xl border-y sm:border">
             <h3 className="scroll-m-20 text-xl tracking-tight mx-4 mt-2 mb-2">
                 <Building2 className="inline-block mr-2" size={20} />
                 Commune sélectionnée :

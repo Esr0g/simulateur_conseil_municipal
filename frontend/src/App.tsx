@@ -1,8 +1,10 @@
 import { useState } from "react"
 import { type Commune } from "@/models/commune";
-import Header from "./components/custom/Header";
-import SearchCard from "./components/custom/SearchCard";
-import DataCard from "./components/custom/DataCard";
+import Header from "@/components/custom/Header";
+import SearchCard from "@/components/custom/SearchCard";
+import DataCard from "@/components/custom/DataCard";
+import Details from "@/components/custom/Details";
+import Footer from "./components/custom/Footer";
 
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
             <Header />
             <SearchCard data={communeData} onDataSet={setCommuneData} />
             <DataCard data={communeData} />
+            <Details />
+            <Footer />
         </div >
     )
 }

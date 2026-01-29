@@ -10,6 +10,17 @@
   [role="button"]:not(:disabled) {
     cursor: pointer;
   }
+
+  a {
+    text-decoration: underline;
+    font-weight: bold;
+  }
+
+  a:visited,
+  a:hover,
+  a:active {
+    opacity: 0.8;
+  }
 }
 
 @theme inline {
