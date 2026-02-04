@@ -5,7 +5,7 @@ export default function Header() {
                 Simulateur de conseil municipal
             </h1>
             <h2 className="scroll-m-20 text-lg sm:text-xl tracking-tight mx-4 sm:mx-16">
-                Et si votre conseil municipal reflétait vraiment la population de votre commune ?
+                À quoi ressemblerait votre assemblée municipale si elle était à l'image de sa population ?
             </h2>
         </>
     )
