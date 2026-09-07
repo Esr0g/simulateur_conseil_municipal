@@ -69,6 +69,30 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
   - Traitement des données dans le notebook `traitement_data.ipynb`
   - Fichier traité = `data/processed/communes.parquet`
  
+## Tests
+
+Les tests sont exécutés automatiquement par la CI : sur chaque pull request, et
+sur `main` avant la construction des images et le déploiement. Un échec bloque
+le déploiement.
+
+**Backend** (pytest) — répartition des sièges, contrat de l'API et invariants
+sur les données réelles :
+
+```bash
+cd backend
+pip install -r requirements-dev.txt
+pytest
+```
+
+**Frontend** (vitest) — affichage des indicateurs et schémas de réponse :
+
+```bash
+cd frontend
+npm install
+npm run test        # npm run test:watch en développement
+npm run lint
+```
+
 ## Prochaines étapes :
 
 - [ ] Ajouter des graphiques
