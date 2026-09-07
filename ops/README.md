@@ -59,8 +59,10 @@ Indispensable pour détecter un VPS éteint. Deux options gratuites :
 - **UptimeRobot** — interroge `https://simulateurconseilmunicipal.fr` depuis
   l'extérieur toutes les 5 minutes et alerte par courriel. Rien à installer.
 - **healthchecks.io** — principe inverse : le VPS signale qu'il est vivant, et
-  l'absence de signal déclenche l'alerte. Ajouter l'appel à la fin de
-  `supervision.sh`, exécuté seulement si tout va bien :
+  l'absence de signal déclenche l'alerte. Insérer l'appel juste avant le
+  `exit` final de `supervision.sh` — ajouté après, il ne serait jamais
+  atteint et la sonde ne signalerait plus rien. Exécuté seulement si
+  tout va bien :
 
   ```bash
   [ "$code_sortie" -eq 0 ] && curl -fsS -m 10 "$URL_PING" >/dev/null 2>&1

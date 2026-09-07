@@ -7,8 +7,20 @@ import { useNavigate, useParams } from "react-router";
 
 export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Commune | null) => void, data: Commune | null }) {
     const [commune, setCommune] = useState<BaseCommune | null>(null);
+    // SearchBar garde sa saisie et sa sélection en interne. Quand on remet
+    // `commune` à null sur un échec, changer cette clé la remonte pour vider le
+    // champ : sans ça le champ affichait toujours "Lyon" alors que le bouton
+    // Simuler était grisé, sans moyen de réessayer.
+    const [cleSearchBar, setCleSearchBar] = useState(0);
     const navigate = useNavigate();
     const { code } = useParams<{ code?: string }>();
+
+    const reinitialiserSelection = () => {
+        setCommune(null);
+        setCleSearchBar((cle) => cle + 1);
+        onDataSet(null);
+        navigate("/", { replace: true });
+    };
 
     // L'url est la seule source de vérité : cet effet charge la commune dès que
     // le code change, qu'il vienne d'un lien partagé ou du bouton "Simuler".
@@ -30,9 +42,7 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
                 if (annule) return;
 
                 if (!resultat) {
-                    setCommune(null);
-                    onDataSet(null);
-                    navigate("/", { replace: true });
+                    reinitialiserSelection();
                     return;
                 }
 
@@ -47,13 +57,12 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
                 // rejetée laissait l'utilisateur sur une page vide, code toujours
                 // dans l'url.
                 if (annule) return;
-                setCommune(null);
-                onDataSet(null);
-                navigate("/", { replace: true });
+                reinitialiserSelection();
             }
         })();
 
         return () => { annule = true; };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [code, navigate, onDataSet]);
 
     // Le bouton se contente de mettre le code dans l'url ; le chargement est fait
@@ -89,7 +98,7 @@ export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Comm
         <div className="flex flex-col gap-1 w-full bg-card sm:rounded-sm md:rounded-md lg:rounded-lg xl:rounded-xl border-y sm:border px-4 py-2.5">
             <h3 className="scroll-m-20 text-lg tracking-tight">Sélectionner une commune</h3>
             <form className="flex flex-col sm:flex-row sm:gap-4 sm:items-center" onSubmit={lancerSimulation}>
-                <SearchBar onChange={setCommune} />
+                <SearchBar key={cleSearchBar} onChange={setCommune} />
                 <Button
                     type="submit"
                     variant="default"

@@ -154,20 +154,41 @@ jobs:
             # Vérification de bonne santé : sans elle, un conteneur qui refuse de
             # démarrer laissait le déploiement au vert et la panne passait
             # inaperçue jusqu'à ce qu'un visiteur signale un 502.
-            sleep 10
-
+            #
+            # On réessaie pendant 120 s : le backend charge communes.parquet puis
+            # fait deux passes apply() sur ~35k lignes au démarrage, ce qui
+            # dépasse parfois 10 s sur un petit VPS. Un sleep fixe suivi d'un
+            # seul curl déclarait alors le déploiement en échec alors que le
+            # service répondait quelques secondes plus tard.
             for cible in "backend:8000/api/communes?nom=paris" "frontend:3000/"; do
               nom="${cible%%:*}"
               url="http://localhost:${cible#*:}"
 
-              if [ -z "$(docker ps -q -f name=^${nom}$ -f status=running)" ]; then
-                echo "Echec du deploiement : le conteneur $nom ne tourne pas."
-                docker logs --tail 50 "$nom" 2>&1 || true
-                exit 1
-              fi
+              pret=0
+              absences=0
+              for tentative in $(seq 1 24); do
+                if [ -n "$(docker ps -q -f name=^${nom}$ -f status=running)" ]; then
+                  absences=0
+                  if curl -fsS -o /dev/null --max-time 10 "$url"; then
+                    pret=1
+                    break
+                  fi
+                else
+                  # Tolere la fenetre de redemarrage d'un conteneur qui flappe,
+                  # sans attendre 120 s pour un conteneur reellement mort.
+                  absences=$((absences + 1))
+                  if [ "$absences" -ge 3 ]; then
+                    echo "Echec du deploiement : le conteneur $nom ne tourne pas."
+                    docker logs --tail 50 "$nom" 2>&1 || true
+                    exit 1
+                  fi
+                fi
 
-              if ! curl -fsS -o /dev/null --max-time 10 "$url"; then
-                echo "Echec du deploiement : $nom ne repond pas sur $url."
+                sleep 5
+              done
+
+              if [ "$pret" -ne 1 ]; then
+                echo "Echec du deploiement : $nom ne repond pas sur $url apres 120 s."
                 docker logs --tail 50 "$nom" 2>&1 || true
                 exit 1
               fi
