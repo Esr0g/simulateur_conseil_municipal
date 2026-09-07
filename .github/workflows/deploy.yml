@@ -77,11 +77,11 @@ jobs:
             docker pull $IMAGE_BACKEND
             docker stop backend || true
             docker rm backend || true
-            docker run -d --name backend -p 8000:8000 -e ENV=production -e PORT=8000 -v "/home/${{ secrets.VPS_USER }}/app/data:/app/data" $IMAGE_BACKEND
+            docker run -d --name backend --restart unless-stopped -p 8000:8000 -e ENV=production -e PORT=8000 -v "/home/${{ secrets.VPS_USER }}/app/data:/app/data" $IMAGE_BACKEND
 
             # Pull et relancer frontend
             docker pull $IMAGE_FRONTEND
             docker stop frontend || true
             docker rm frontend || true
-            docker run -d --name frontend -p 3000:3000 $IMAGE_FRONTEND
-      
+            docker run -d --name frontend --restart unless-stopped -p 3000:3000 $IMAGE_FRONTEND
+          EOF
