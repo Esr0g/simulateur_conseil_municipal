@@ -20,4 +20,13 @@ export default defineConfig([
       globals: globals.browser,
     },
   },
+  {
+    // Composants shadcn/ui : ils exportent volontairement leurs variantes à côté
+    // du composant, et sont régénérés par l'outil. On n'y applique pas la règle
+    // react-refresh, qui ne vaut que pour le code applicatif.
+    files: ['src/components/ui/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
 ])

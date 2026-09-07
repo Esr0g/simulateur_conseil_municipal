@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.commune import router as api_router
+from app.api import router as api_router
 from app.errors import register_exception_handlers
 
 def create_app() -> FastAPI:

@@ -6,4 +6,6 @@ WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
+# --reload : le code est monté en volume par docker-compose, sans ce drapeau
+# les modifications n'étaient jamais prises en compte sans rebuild.
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000", "--reload"]

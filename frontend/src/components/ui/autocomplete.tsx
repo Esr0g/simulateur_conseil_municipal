@@ -54,7 +54,7 @@ export const AutoComplete = ({
 
             setInputValue(event.target.value)
         },
-        [isOpen],
+        [isOpen, setInputValue],
     )
 
     const handleBlur = useCallback(() => {
@@ -63,7 +63,7 @@ export const AutoComplete = ({
             setInputValue(selected.libelle)
         }
 
-    }, [selected])
+    }, [selected, setInputValue])
 
     const handleSelectOption = useCallback(
         (selectedOption: BaseCommune) => {
@@ -78,7 +78,7 @@ export const AutoComplete = ({
 
             setOpen(false)
         },
-        [onValueChange],
+        [onValueChange, setInputValue],
     )
 
     return (

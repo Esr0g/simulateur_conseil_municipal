@@ -1,5 +1,5 @@
 {
-    "name": "Flask Dev Container",
+    "name": "Simulateur Conseil Municipal - Dev Container",
     "dockerComposeFile": "../docker-compose.yml",
     "service": "backend",
     "workspaceFolder": "/app",

@@ -21,7 +21,7 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
 - Scripts Python pour pré-traiter les données, notamment réduire la taille des données sources (voir notebooks `traitement_data.ipynb`). Par exemple, le fichier de rescencement de la population par CSP a été réduit de 80 à 3Mo.
 - Affichage des données pour chaque commune et calcul des ratios théoriques de composition des conseils municipaux
 - Documentation des sources et des variables utilisées
-- Un premier travail avait été effectué pour chercher les données depuis l'API de l'INSEE, les scripts se trouvent dans le repertoire `/old/`
+- Un premier travail avait été effectué pour chercher les données depuis l'API de l'INSEE ; ces scripts ne font plus partie du dépôt.
 
 ## Sources de données utilisées
 
@@ -31,7 +31,7 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
   - Année 2022
   - Variables à retenir : GEO, PCS, OBS_VALUE sur la période 2022, pour les personnes de 15 ans ou plus, indifférent de l'âge
   - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour réduire sa taille.
-  - Fichier traité = `scripts/data/processed/population_communes_csp_2022.parquet`
+  - Fichier traité = `data/processed/population_communes_csp_2022.parquet`
 
 - **Recensement de la population - Population de référence**
   - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_POPULATIONS_REFERENCE 
@@ -39,7 +39,7 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
   - Année 2022
   - Variable à retenir : GEO, OBS_VALUE
   - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` ajouter le nombre de conseillers municipaux à partir du fichier `conseillers.csv`, et la proportion de locataires.
-  - Fichier traité = `scripts/data/processed/communes.parquet`
+  - Fichier traité = `data/processed/communes.parquet`
 
 - **Recensement de la population - Logements**
   - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_RP_LOGEMENT_PRINC
@@ -47,7 +47,7 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
   - Année 2022
   - Variable à retenir : GEO, RP_MEASURE (DWELLINGS_POPSIZE)
   - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour calculer la proportion de locataires.
-  - Fichier traité = `scripts/data/processed/communes.parquet`
+  - Fichier traité = `data/processed/communes.parquet`
 
 - **Filosofi - Niveau de vie médian et taux de pauvreté par tranche d’âge du référent fiscal**
   - Lien : https://catalogue-donnees.insee.fr/fr/catalogue/recherche/DS_FILOSOFI_AGE_TP_NIVVIE
@@ -55,19 +55,19 @@ Ce projet est porté dans le cadre de l’association **Data For Good France**, 
   - Année 2021
   - Variable à retenir : GEO, OBS_VALUE, FILOSOFI_MEASURE (PR_MD60)
   - Le fichier est pré-traité dans le notebook `traitement_data.ipynb` pour calculer la proportion de locataires.
-  - Fichier traité = `scripts/data/processed/communes.parquet`
+  - Fichier traité = `data/processed/communes.parquet`
     
 - **Echelle du nombre de conseillers munincipaux selon la population**
   -   Fichier créé par les développeurs
   -   Lien source : https://www.legifrance.gouv.fr/codes/section_lc/LEGITEXT000006070633/LEGISCTA000006164544/
   -   Fichier est utilisé pour calculer le nombre de connseillers par commune dans le notebook `traitement_data.ipynb`
-  -   Fichier = `scripts/data/raw_data/conseillers.csv`
+  -   Fichier = `data/raw_data/conseillers.csv`
 
 - **Code officiel géographique au 1er janvier 2025 - Communes**
   - Lien : https://www.insee.fr/fr/information/8377162)
   - Fichier est utilisé pour la barre de recherche des communes par libellé
   - Traitement des données dans le notebook `traitement_data.ipynb`
-  - Fichier traité = `scripts/data/processed/communes.parquet`
+  - Fichier traité = `data/processed/communes.parquet`
  
 ## Prochaines étapes :
 

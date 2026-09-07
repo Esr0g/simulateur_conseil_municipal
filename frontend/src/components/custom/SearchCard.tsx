@@ -7,65 +7,88 @@ import { useNavigate, useParams } from "react-router";
 
 export default function SearchCard({ onDataSet, data }: { onDataSet: (data: Commune | null) => void, data: Commune | null }) {
     const [commune, setCommune] = useState<BaseCommune | null>(null);
-    let navigate = useNavigate();
+    const navigate = useNavigate();
     const { code } = useParams<{ code?: string }>();
 
-    // Récupère les communes soit quand un code est présent dans l'url soit lorque le bouton "simuler" est pressé
-    const fetchData = async (e?: FormEvent<HTMLFormElement>) => {
-        e?.preventDefault()
-        if (!commune && !code) return;
+    // L'url est la seule source de vérité : cet effet charge la commune dès que
+    // le code change, qu'il vienne d'un lien partagé ou du bouton "Simuler".
+    useEffect(() => {
+        if (!code) return;
 
-        const data_tmp = await fetchCommuneData(commune?.code_commune || code || "")
-        if (data_tmp === null) {
+        // Retire de l'url un code qui n'a pas le format attendu
+        if (!/^[0-9]{5}$/.test(code)) {
             navigate("/", { replace: true });
             return;
         }
 
-        setCommune({ libelle: data_tmp.libelle, code_commune: data_tmp.code_commune, code_postal: data_tmp.code_postal })
-        onDataSet(data_tmp);
+        let annule = false;
+        setCommune({ libelle: "", code_commune: code, code_postal: [] });
 
-        navigate(`/${data_tmp.code_commune}`, { replace: true })
-    }
+        (async () => {
+            try {
+                const resultat = await fetchCommuneData(code);
+                if (annule) return;
 
-    // Permet de retirer de l'url le code si invalide
-    useEffect(() => {
-        if (!code) return;
+                if (!resultat) {
+                    setCommune(null);
+                    onDataSet(null);
+                    navigate("/", { replace: true });
+                    return;
+                }
 
-        if (!/^[0-9]{5}$/.test(code)) {
-            navigate("/");
-            return;
-        }
+                setCommune({
+                    libelle: resultat.libelle,
+                    code_commune: resultat.code_commune,
+                    code_postal: resultat.code_postal,
+                });
+                onDataSet(resultat);
+            } catch {
+                // Code inexistant ou API injoignable : sans ce catch, la promesse
+                // rejetée laissait l'utilisateur sur une page vide, code toujours
+                // dans l'url.
+                if (annule) return;
+                setCommune(null);
+                onDataSet(null);
+                navigate("/", { replace: true });
+            }
+        })();
 
-        setCommune({ libelle: "", code_commune: code, code_postal: [] })
-        fetchData();
-    }, [code, navigate])
+        return () => { annule = true; };
+    }, [code, navigate, onDataSet]);
+
+    // Le bouton se contente de mettre le code dans l'url ; le chargement est fait
+    // par l'effet ci-dessus. Évite les deux appels API que déclenchait chaque
+    // simulation (un ici, un via la navigation qui suivait).
+    const lancerSimulation = (e?: FormEvent<HTMLFormElement>) => {
+        e?.preventDefault();
+        if (!commune) return;
+        navigate(`/${commune.code_commune}`, { replace: true });
+    };
 
     const isButtonDisabled = (): boolean => {
         if (!commune) return true;
         if (data && data.code_commune === commune.code_commune) return true;
         return false;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Enter" && !isButtonDisabled()) {
-            fetchData();
-            event.preventDefault();
-            event.stopPropagation();
-        }
     };
 
     useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key !== "Enter") return;
+            if (!commune || (data && data.code_commune === commune.code_commune)) return;
 
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
+            navigate(`/${commune.code_commune}`, { replace: true });
+            event.preventDefault();
+            event.stopPropagation();
         };
-    }, [handleKeyDown]);
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    }, [commune, data, navigate]);
 
     return (
         <div className="flex flex-col gap-1 w-full bg-card sm:rounded-sm md:rounded-md lg:rounded-lg xl:rounded-xl border-y sm:border px-4 py-2.5">
             <h3 className="scroll-m-20 text-lg tracking-tight">Sélectionner une commune</h3>
-            <form className="flex flex-col sm:flex-row sm:gap-4 sm:items-center" onSubmit={fetchData}>
+            <form className="flex flex-col sm:flex-row sm:gap-4 sm:items-center" onSubmit={lancerSimulation}>
                 <SearchBar onChange={setCommune} />
                 <Button
                     type="submit"

@@ -84,4 +84,31 @@ jobs:
             docker stop frontend || true
             docker rm frontend || true
             docker run -d --name frontend --restart unless-stopped -p 3000:3000 $IMAGE_FRONTEND
+
+            # Vérification de bonne santé : sans elle, un conteneur qui refuse de
+            # démarrer laissait le déploiement au vert et la panne passait
+            # inaperçue jusqu'à ce qu'un visiteur signale un 502.
+            sleep 10
+
+            for cible in "backend:8000/api/communes?nom=paris" "frontend:3000/"; do
+              nom="${cible%%:*}"
+              url="http://localhost:${cible#*:}"
+
+              if [ -z "$(docker ps -q -f name=^${nom}$ -f status=running)" ]; then
+                echo "Echec du deploiement : le conteneur $nom ne tourne pas."
+                docker logs --tail 50 "$nom" 2>&1 || true
+                exit 1
+              fi
+
+              if ! curl -fsS -o /dev/null --max-time 10 "$url"; then
+                echo "Echec du deploiement : $nom ne repond pas sur $url."
+                docker logs --tail 50 "$nom" 2>&1 || true
+                exit 1
+              fi
+
+              echo "$nom : OK"
+            done
+
+            # Retire les images sans conteneur devenues inutiles apres le pull.
+            docker image prune -f
           EOF

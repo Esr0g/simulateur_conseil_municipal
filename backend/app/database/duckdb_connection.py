@@ -1,7 +1,7 @@
 import duckdb
 
 class DuckDBConnection:
-    def __init__(self, path=':memory'):
+    def __init__(self, path=':memory:'):
         self.path = path
         self.con = None
 
