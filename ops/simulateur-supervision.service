@@ -1,0 +1,12 @@
+[Unit]
+Description=Supervision des conteneurs du simulateur de conseil municipal
+# Docker doit être prêt, sinon la sonde conclut à tort à une panne.
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/simulateur-ops/supervision.sh
+# Facultatif : y placer SUPERVISION_WEBHOOK=... pour être notifié.
+# Le tiret rend le fichier optionnel.
+EnvironmentFile=-/etc/simulateur-supervision.env

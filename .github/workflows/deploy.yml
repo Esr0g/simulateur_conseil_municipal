@@ -4,9 +4,74 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements-dev.txt
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        working-directory: backend
+        run: pytest -q
+
+      - name: Check shell scripts
+        # --severity=error : on bloque sur ce qui casse, pas sur le style.
+        run: |
+          for script in ops/*.sh; do
+            bash -n "$script"
+            shellcheck --severity=error "$script"
+          done
+
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '25'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+
+      - name: Run tests
+        working-directory: frontend
+        run: npm run test
+
+      - name: Type check and build
+        working-directory: frontend
+        run: npm run build
+
   build:
+    # Les images ne sont construites que si les deux suites de tests passent.
+    # Sur une pull request on s'arrête ici : on valide sans publier ni déployer.
+    needs: [test-backend, test-frontend]
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -34,6 +99,7 @@ jobs:
 
   deploy:
     needs: build
+    if: github.event_name == 'push'
     runs-on: ubuntu-latest
 
     steps:
@@ -77,11 +143,59 @@ jobs:
             docker pull $IMAGE_BACKEND
             docker stop backend || true
             docker rm backend || true
-            docker run -d --name backend -p 8000:8000 -e ENV=production -e PORT=8000 -v "/home/${{ secrets.VPS_USER }}/app/data:/app/data" $IMAGE_BACKEND
+            docker run -d --name backend --restart unless-stopped -p 8000:8000 -e ENV=production -e PORT=8000 -v "/home/${{ secrets.VPS_USER }}/app/data:/app/data" $IMAGE_BACKEND
 
             # Pull et relancer frontend
             docker pull $IMAGE_FRONTEND
             docker stop frontend || true
             docker rm frontend || true
-            docker run -d --name frontend -p 3000:3000 $IMAGE_FRONTEND
-      
+            docker run -d --name frontend --restart unless-stopped -p 3000:3000 $IMAGE_FRONTEND
+
+            # Vérification de bonne santé : sans elle, un conteneur qui refuse de
+            # démarrer laissait le déploiement au vert et la panne passait
+            # inaperçue jusqu'à ce qu'un visiteur signale un 502.
+            #
+            # On réessaie pendant 120 s : le backend charge communes.parquet puis
+            # fait deux passes apply() sur ~35k lignes au démarrage, ce qui
+            # dépasse parfois 10 s sur un petit VPS. Un sleep fixe suivi d'un
+            # seul curl déclarait alors le déploiement en échec alors que le
+            # service répondait quelques secondes plus tard.
+            for cible in "backend:8000/api/communes?nom=paris" "frontend:3000/"; do
+              nom="${cible%%:*}"
+              url="http://localhost:${cible#*:}"
+
+              pret=0
+              absences=0
+              for tentative in $(seq 1 24); do
+                if [ -n "$(docker ps -q -f name=^${nom}$ -f status=running)" ]; then
+                  absences=0
+                  if curl -fsS -o /dev/null --max-time 10 "$url"; then
+                    pret=1
+                    break
+                  fi
+                else
+                  # Tolere la fenetre de redemarrage d'un conteneur qui flappe,
+                  # sans attendre 120 s pour un conteneur reellement mort.
+                  absences=$((absences + 1))
+                  if [ "$absences" -ge 3 ]; then
+                    echo "Echec du deploiement : le conteneur $nom ne tourne pas."
+                    docker logs --tail 50 "$nom" 2>&1 || true
+                    exit 1
+                  fi
+                fi
+
+                sleep 5
+              done
+
+              if [ "$pret" -ne 1 ]; then
+                echo "Echec du deploiement : $nom ne repond pas sur $url apres 120 s."
+                docker logs --tail 50 "$nom" 2>&1 || true
+                exit 1
+              fi
+
+              echo "$nom : OK"
+            done
+
+            # Retire les images sans conteneur devenues inutiles apres le pull.
+            docker image prune -f
+          EOF

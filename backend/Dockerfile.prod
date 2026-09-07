@@ -3,12 +3,13 @@ FROM python:3.14-slim
 
 WORKDIR /app
 
-# Copier requirements et code
+# Les dépendances sont installées avant la copie du code : la couche pip reste
+# en cache tant que requirements.txt ne change pas, au lieu d'être reconstruite
+# à chaque commit.
 COPY requirements.txt .
-COPY . /app
-
-# Installer les dépendances directement
 RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . /app
 
 # Exposer le port FastAPI
 EXPOSE 8000

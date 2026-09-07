@@ -1,2 +1,5 @@
 .venv
 /venv
+
+# Worktrees et etat local de Claude Code
+.claude/

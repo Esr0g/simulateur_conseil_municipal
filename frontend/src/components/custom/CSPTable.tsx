@@ -1,22 +1,16 @@
 import type { Commune } from "@/models/commune";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import HoverInfos from "@/components/custom/HoverInfos";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 export default function CSPTable({ data }: { data: Commune | null }) {
-    const [totPopCSP, setTotPopCSP] = useState(0);
-
-    // Somme des CSP pour calculer le ratio des conseillers et le poids
-    useEffect(() => {
-        if (!data) return;
-        if (data.csp.length === 0) return;
-
-        let somme = 0;
-        for (const d of data.csp) {
-            somme += d.population_csp;
-        }
-        setTotPopCSP(somme);
-    }, [data])
+    // Somme des CSP pour calculer le ratio des conseillers et le poids.
+    // Calculée pendant le rendu : avec un état mis à jour dans un effet, la
+    // première passe affichait "NaN %" (division par un total encore à 0).
+    const totPopCSP = useMemo(
+        () => data?.csp.reduce((somme, d) => somme + d.population_csp, 0) ?? 0,
+        [data]
+    );
 
     return (
         <Table className="text-base w-full table-fixed sm:table-auto">
@@ -43,7 +37,7 @@ export default function CSPTable({ data }: { data: Commune | null }) {
                 {data && data.csp && data.csp.map((csp) => (
                     <TableRow key={csp.code_csp}>
                         <TableCell className="wrap-break-word whitespace-normal pl-4">{csp.libelle_csp}</TableCell>
-                        <TableCell className="text-right pr-9">{(csp.population_csp / totPopCSP * 100).toFixed(2)} %</TableCell>
+                        <TableCell className="text-right pr-9">{totPopCSP > 0 ? (csp.population_csp / totPopCSP * 100).toFixed(2) : "0.00"} %</TableCell>
                         <TableCell className="text-right font-bold pr-12">{csp.nb_conseillers_csp}</TableCell>
                     </TableRow>))}
             </TableBody>

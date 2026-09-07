@@ -18,8 +18,14 @@ export function SearchBar({ onChange }: { onChange: (val: BaseCommune) => void }
         // debounce pour éviter de spamer le back
         const handler = setTimeout(() => {
             const fetchData = async () => {
-                const data = await fetchBaseCommunes(inputValue);
-                setCommunes(data);
+                try {
+                    const data = await fetchBaseCommunes(inputValue);
+                    setCommunes(data);
+                } catch {
+                    // API injoignable : liste vide plutôt qu'une promesse rejetée
+                    // non traitée, qui remontait en erreur dans la console.
+                    setCommunes([]);
+                }
             }
             fetchData();
         }, 250);
