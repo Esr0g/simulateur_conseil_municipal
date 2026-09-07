@@ -1,0 +1,3 @@
+# Les scripts shell doivent garder des fins de ligne LF : un CRLF rend le
+# script inutilisable sur le VPS (bash: bad interpreter).
+*.sh text eol=lf

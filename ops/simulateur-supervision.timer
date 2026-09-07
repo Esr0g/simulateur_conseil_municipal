@@ -1,0 +1,13 @@
+[Unit]
+Description=Vérifie toutes les 5 minutes que le simulateur répond
+
+[Timer]
+# Après un redémarrage, laisse aux conteneurs le temps de se relancer.
+OnBootSec=3min
+OnUnitActiveSec=5min
+Unit=simulateur-supervision.service
+# Évite que toutes les sondes tombent à la même seconde.
+RandomizedDelaySec=30s
+
+[Install]
+WantedBy=timers.target

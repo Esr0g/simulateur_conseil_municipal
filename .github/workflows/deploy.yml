@@ -29,6 +29,14 @@ jobs:
         working-directory: backend
         run: pytest -q
 
+      - name: Check shell scripts
+        # --severity=error : on bloque sur ce qui casse, pas sur le style.
+        run: |
+          for script in ops/*.sh; do
+            bash -n "$script"
+            shellcheck --severity=error "$script"
+          done
+
   test-frontend:
     runs-on: ubuntu-latest
 

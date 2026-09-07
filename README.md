@@ -93,6 +93,11 @@ npm run test        # npm run test:watch en développement
 npm run lint
 ```
 
+## Exploitation
+
+Supervision du service en production, installation de la sonde, notifications et
+diagnostic d'un 502 : voir [`ops/README.md`](ops/README.md).
+
 ## Prochaines étapes :
 
 - [ ] Ajouter des graphiques
